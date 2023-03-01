@@ -67,39 +67,6 @@ void MX_I2C1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-float luxval(float ch0,float ch1)
-{
-	int lux;
-	if (ch1/ch0>0)
-	{
-		if(ch1/ch0>0.52)
-		{
-			if(ch1/ch0>0.65)
-			{
-				if(ch1/ch0>0.65)
-				{
-					if(ch1/ch0>0.80)
-					{
-						if(ch1/ch0>1.30)
-						{
-
-						}
-					}
-				}
-			}
-			else
-			{
-
-			}
-		}
-		else
-		{
-			lux = 0.0315*ch0 - 0.0593*ch0*pow((ch1/ch0),1.4);
-		}
-	}
-	else
-		return -1;
-}
 
 float CalculerLux (float CH0, float CH1)
 {
@@ -320,7 +287,7 @@ lcd_position(&hi2c1,0,0);
 
 
 			}
-		if(aux) // reinit si capteur debranché
+		if(aux > 0) // reinit si capteur debranché
 			{
 			TLS2561_init();
 			aux-=1;
