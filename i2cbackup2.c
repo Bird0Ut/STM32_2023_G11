@@ -189,23 +189,23 @@ void TLS2561_init(void)
 int TLS2561_read(uint8_t *val)
 {
 	uint8_t dat[1];
-	dat[0] = 0xBC;
+	dat[0] = 0xBC; // demande de lecture de mesure
 
 	if((HAL_I2C_Master_Transmit(&hi2c1,TLS_2561_I2C_ID, dat,1,5000)) == HAL_OK)
 	{
 		if((HAL_I2C_Master_Receive(&hi2c1,(TLS_2561_I2C_ID),val,6,500)) == HAL_OK)
 			{
 				HAL_Delay(50);
-				return(1); // recup 2 premiers octets
+				return(1); // recup 6 premiers octets
 			}
 		else
 		{
-			return(-1);
+			return(-1); // erreur de reception
 		}
 	}
 	else
 	{
-		return(-1);
+		return(-1); // erreur de transmission
 	}
 }
 
