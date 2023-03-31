@@ -183,8 +183,8 @@ void TLS2561_init(void)
 		HAL_I2C_Master_Transmit(&hi2c1,TLS_2561_I2C_ID, datas,2,5000);
 			HAL_Delay(50);
 
-		datas[0] = 0x81 ; //commande de parametrage capteur
-		datas[1] = 0x02 ; //registre d'initialisation du capteur
+		datas[0] = 0x81 ; //commande de parametrage temps d'échantillonage
+		datas[1] = 0x02 ; //registre reglage 402 ms
 
 		HAL_I2C_Master_Transmit(&hi2c1,TLS_2561_I2C_ID, datas,2,5000);
 			HAL_Delay(50);
