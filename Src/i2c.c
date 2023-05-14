@@ -150,8 +150,8 @@ void sht31_init(void)
 int sht31_read(SHT_31* val)
 {
 	uint8_t data[2];
-	data[0] = 0x2C ; // registre de demande de lecture temp
-	data[1] = 0x06 ; // regiqtre de demande de lecture hydro
+	data[0] = 0x2C ; // registre de d'activation mesure
+	data[1] = 0x06 ; // regiqtre de demande de mesure
 	uint8_t mes[5];
 
 	if((HAL_I2C_Master_Transmit(&hi2c1,SHT_31_I2C_ID + 1, data,2,5000)) == HAL_OK)
