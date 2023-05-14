@@ -41,8 +41,8 @@ extern I2C_HandleTypeDef hi2c1;
 
 typedef struct
 {
-  float temp;
-  float hydro;
+  float temp; // température mesuré
+  float hydro; //hygrométrie mesuré
 } SHT_31;
 /* USER CODE END Private defines */
 
