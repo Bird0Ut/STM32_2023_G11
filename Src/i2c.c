@@ -177,8 +177,7 @@ int sht31_read(SHT_31* val)
 void TLS2561_init(void)
 {
 	uint8_t datas[2];
-		datas[0] = 0x80 ; //commande de parametrage capteur
-		datas[1] = 0x03 ; //registre d'initialisation du capteur
+		datas[0] = 0x80 ; //registre d'initialisation du capteur
 
 		HAL_I2C_Master_Transmit(&hi2c1,TLS_2561_I2C_ID, datas,2,5000);
 			HAL_Delay(50);
