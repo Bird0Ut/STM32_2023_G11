@@ -175,45 +175,4 @@ int sht31_read(SHT_31* val)
 
 }
 
-/* TLS_2561 */
-void TLS2561_init(void)
-{
-	uint8_t datas[2];
-		datas[0] = 0x80 ; //commande de parametrage capteur
-		datas[1] = 0x03 ; //registre d'initialisation du capteur
-
-		HAL_I2C_Master_Transmit(&hi2c1,TLS_2561_I2C_ID, datas,2,5000);
-			HAL_Delay(50);
-
-		datas[0] = 0x81 ; //commande de parametrage capteur
-		datas[1] = 0x02 ; //registre d'initialisation du capteur
-
-		HAL_I2C_Master_Transmit(&hi2c1,TLS_2561_I2C_ID, datas,2,5000);
-			HAL_Delay(50);
-}
-
-int TLS2561_read(uint8_t *val)
-{
-	uint8_t dat[2];
-
-	dat[0] = 0xAC; //registre de commande d'apel de mesure
-
-	if((HAL_I2C_Master_Transmit(&hi2c1,TLS_2561_I2C_ID, dat,1,5000)) == HAL_OK)
-	{
-		if((HAL_I2C_Master_Receive(&hi2c1,(TLS_2561_I2C_ID),val,6,500)) == HAL_OK)
-			{
-				return(1); // recup 6 premiers octets
-			}
-		else
-		{
-			return(-1);
-		}
-	}
-	else
-	{
-		return(-1);
-	}
-
-}
-
 /* USER CODE END 1 */
