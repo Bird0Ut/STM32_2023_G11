@@ -53,9 +53,6 @@ void MX_I2C1_Init(void);
 void sht31_init(void);
 int sht31_read(SHT_31* val);
 
-void TLS2561_init(void);
-int TLS2561_read(uint8_t *val);
-
 
 /* USER CODE END Prototypes */
 
