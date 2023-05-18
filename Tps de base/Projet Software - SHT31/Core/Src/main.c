@@ -69,36 +69,6 @@ void MX_I2C1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-unsigned int CalculerLux (unsigned int CH0,unsigned int CH1)
-{
-    float lux;
-    float ratioCH1CH0 = CH1/CH0;
-
-    if (((ratioCH1CH0 > 0.0) && ratioCH1CH0) <= 0.52)
-    {
-        lux = 0.0315*CH0 - 0.0593*CH0*(pow(ratioCH1CH0,1.4));
-    }
-    else if ((ratioCH1CH0 > 0.52) && (ratioCH1CH0 <= 0.61))
-    {
-        lux = 0.0229*CH0 - 0.0291*CH1;
-    }
-    else if ((ratioCH1CH0 > 0.61) && (ratioCH1CH0 <= 0.80))
-    {
-        lux = 0.0157*CH0 - 0.0180*CH1;
-    }
-    else if ((ratioCH1CH0 > 0.80) && (ratioCH1CH0 <= 1.30))
-    {
-        lux = 0.00338*CH0 - 0.00260*CH1;
-    }
-    else
-    {
-        lux = 0.0;
-    }
-
-    return lux;
-}
-
-
 /* USER CODE END 0 */
 
 /**
@@ -118,18 +88,10 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   uint8_t buf[15];
-  uint8_t buf1[15];
   //HAL_StatusTypeDef ret;
   float temp_c;
   float hydro_c;
-  uint16_t lum_c;
-  uint16_t lum_c2;
-  unsigned long lux;
-  static uint8_t lum[15];
   int retmes;
-  int aux;
-  int affichagechanel = 0;
-  unsigned long aux2;
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -147,7 +109,6 @@ int main(void)
 
 // initialisation
   sht31_init();
-  TLS2561_init();
   lcd_init(&hi2c1,&data);
 
   clearlcd();
@@ -156,24 +117,6 @@ lcd_position(&hi2c1,0,0);
 lcd_print(&hi2c1,"     HELLO!     ");
 HAL_Delay(3000);
 lcd_position(&hi2c1,0,0);
-
-int calcullum(int nb,unsigned long *lumi)
-{
-	if(TLS2561_read(&lum) == -1)
-			return -1;
-			else
-			{
-				lum_c = (lum[0]+lum[1]*256);
-				lum_c2 = (lum[2]+lum[3]*256);
-				aux2 = CalculateLux(0,2, lum_c,
-						lum_c2,1);
-
-					*lumi=aux2;
-				return 0;
-			}
-
-}
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -234,85 +177,6 @@ int calcullum(int nb,unsigned long *lumi)
 	  	  lcd_print(&hi2c1,"  erreur recep");
 		  }
 //===============================================================================================================
-
-		HAL_Delay(50);
-
-//=================================== parti lum ==================================================================
-
-		if(calcullum(1,&lux) == -1)
-			{reglagecouleur(0xFF,0,0);
-			lcd_position(&hi2c1,0,1);
-			lcd_print(&hi2c1," erreur TLS2561");
-			aux = 3;
-
-			}
-		else
-			{
-
-			//============================================================= affichage chanels ======================
-			if(affichagechanel)
-			{
-			lum_c /= 65.536;
-			lum_c2 /= 65.536;
-
-			buf[8]= (int)lum_c/1000;
-			buf[9]= (int)(lum_c - buf[8]*1000)/100;
-			buf[10]= (int)(lum_c - buf[8]*1000 - buf[9]*100)/10;
-			buf[11]= (int)(lum_c - buf[8]*1000 - buf[9]*100 - buf[10]*10);
-
-			buf1[8]= (int)lum_c2/1000;
-			buf1[9]= (int)(lum_c2 - buf1[8]*1000)/100;
-			buf1[10]= (int)(lum_c2 - buf1[8]*1000 - buf1[9]*100)/10;
-			buf1[11]= (int)(lum_c2 - buf1[8]*1000 - buf1[9]*100 - buf1[10]*10);
-
-			if(retmes){
-			lcd_position(&hi2c1,9,0);
-			lcd_print(&hi2c1,"C0=");
-			lcd_write(&hi2c1,0x3F & (buf[8])+0x30);
-			lcd_write(&hi2c1,0x3F & (buf[9])+0x30);
-			lcd_write(&hi2c1,0x3F & (buf[10])+0x30);
-			lcd_write(&hi2c1,0x3F & (buf[11])+0x30);
-			lcd_position(&hi2c1,9,1);
-			lcd_print(&hi2c1,"C1=");
-			lcd_write(&hi2c1,0x3F & (buf1[8])+0x30);
-			lcd_write(&hi2c1,0x3F & (buf1[9])+0x30);
-			lcd_write(&hi2c1,0x3F & (buf1[10])+0x30);
-			lcd_write(&hi2c1,0x3F & (buf1[11])+0x30);
-			}
-			}
-			//========================================================================================================
-			if(!affichagechanel)
-			{
-				buf[8]= (int)lux/100000;
-				buf[9]= (int)(lux - buf[8]*100000)/10000;
-				buf[10]= (int)(lux - buf[8]*100000 - buf[9]*10000)/1000;
-				buf[11]= (int)(lux - buf[8]*100000 - buf[9]*10000 - buf[10]*1000)/100;
-				buf[12]= (int)(lux - buf[8]*100000 - buf[9]*10000 - buf[10]*1000 - buf[11]*100)/10;
-				buf[13]= (int)(lux - buf[8]*100000 - buf[9]*10000 - buf[10]*1000 - buf[11]*100 - buf[12]*10);
-				if(retmes)
-				{
-					lcd_position(&hi2c1,9,0);
-					lcd_print(&hi2c1,"Lux =   ");
-					lcd_position(&hi2c1,9,1);
-					lcd_write(&hi2c1,0x3F & (buf[8])+0x30);
-					lcd_write(&hi2c1,0x3F & (buf[9])+0x30);
-					lcd_write(&hi2c1,0x3F & (buf[10])+0x30);
-					lcd_write(&hi2c1,0x3F & (buf[11])+0x30);
-					lcd_write(&hi2c1,0x3F & (buf[12])+0x30);
-					lcd_write(&hi2c1,0x3F & (buf[13])+0x30);
-				}
-
-			}
-
-
-			}
-		if(aux > 0) // reinit si capteur debranché
-			{
-			TLS2561_init();
-			aux-=1;
-			}
-
-//====================================================================================================================
 
 		  HAL_Delay(2000);
 
